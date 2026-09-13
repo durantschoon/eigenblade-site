@@ -1,0 +1,5 @@
+# Cloudflare Pages response headers.
+# LAUNCH: delete this rule (and the robots meta tag in each .html page)
+# to allow search engines to index eigenblade.ninja. See README.md.
+/*
+  X-Robots-Tag: noindex

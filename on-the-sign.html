@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- LAUNCH: delete the next line (and the rule in _headers) to allow search indexing. -->
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>On the Sign of the Outer Product</title>
+<meta name="description" content="An essay in two manners, after Hermann Grassmann and David Hestenes, on why the outer product's sign is upside down.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@0,400;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=STIX+Two+Text:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Tokens. Prussian blue for the new signs (Grassmann taught in Stettin, Prussia);
+     orange only where a legacy sign is marked. Blue/orange stays distinct under the
+     common colour-vision deficiencies; captions also name position, not colour alone. */
+  :root {
+    --paper: #F3F5F4;
+    --ink: #1A2027;
+    --muted: #56616B;
+    --rule: #D3DADC;
+    --prussian: #1D4E6E;
+    --legacy-ink: #B35500;
+    --wash: #E7ECEE;
+    --display: "Libre Bodoni", "Bodoni 72", "Didot", Georgia, serif;
+    --text: "Newsreader", "Iowan Old Style", Georgia, serif;
+    --math: "STIX Two Text", "Cambria Math", "Times New Roman", serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --measure: 37rem;
+    --side: 13.5rem;
+    --gap: 3rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #11161B;
+      --ink: #E2E6E9;
+      --muted: #98A4AE;
+      --rule: #2A333B;
+      --prussian: #8BB9DC;
+      --legacy-ink: #FFB65C;
+      --wash: #182028;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #11161B;
+    --ink: #E2E6E9;
+    --muted: #98A4AE;
+    --rule: #2A333B;
+    --prussian: #8BB9DC;
+    --legacy-ink: #FFB65C;
+    --wash: #182028;
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--text);
+    font-size: 1.15rem;
+    line-height: 1.62;
+    font-optical-sizing: auto;
+    padding-inline: 20px;
+    padding-block: 0 5rem;
+  }
+  a { color: var(--prussian); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible { outline: 2px solid var(--prussian); outline-offset: 3px; border-radius: 2px; }
+
+  .page { max-width: calc(var(--measure) + var(--gap) + var(--side)); margin-inline: auto; }
+  .col { max-width: var(--measure); }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2rem 3rem;
+    align-items: end;
+    padding-block: 4.5rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 3rem;
+  }
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2.3rem, 5.4vw, 3.7rem);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    margin: 0 0 1.1rem;
+    text-wrap: balance;
+  }
+  h1 em { font-style: italic; color: var(--prussian); }
+  .dek { font-style: italic; font-size: 1.22rem; line-height: 1.45; color: var(--muted); margin: 0 0 1.25rem; max-width: 32rem; text-wrap: pretty; }
+  .byline { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+
+  .emblem { display: flex; gap: 2.25rem; margin: 0; }
+  .emblem figure { margin: 0; display: grid; justify-items: center; gap: 0.35rem; text-align: center; }
+  .emblem .g-big { width: 6rem; height: 5.2rem; color: var(--prussian); --legacy: var(--legacy-ink); stroke-width: 0.052; }
+  .emblem figcaption { font-size: 0.92rem; line-height: 1.25; }
+  .emblem code { display: block; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; }
+  .emblem-note { grid-column: 2; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.04em; color: var(--muted); margin: -1rem 0 0; text-align: center; }
+  .emblem-note span { color: var(--legacy-ink); }
+
+  /* ---------- Parts ---------- */
+  .part-head { margin: 4rem 0 2rem; }
+  .part-head:first-of-type { margin-top: 0; }
+  h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.7rem, 3.4vw, 2.2rem);
+    line-height: 1.15;
+    margin: 0 0 0.35rem;
+    text-wrap: balance;
+  }
+  h2 .numeral { color: var(--prussian); margin-right: 0.35em; }
+  .part-meta { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+
+  .prose p { margin: 0 0 1.15em; text-wrap: pretty; hyphens: auto; }
+  .prose > .col > p:first-of-type::first-letter {
+    font-family: var(--display);
+    float: left;
+    font-size: 3.6em;
+    line-height: 0.82;
+    padding: 0.06em 0.09em 0 0;
+    color: var(--prussian);
+  }
+  .m { font-family: var(--math); font-style: italic; }
+  .op { font-family: var(--math); font-style: normal; }
+  .g { width: 0.74em; height: 0.64em; vertical-align: -0.04em; stroke-width: 0.12; color: var(--prussian); }
+
+  /* Sidenotes: in the margin on wide screens, inline beneath on narrow ones. */
+  .side {
+    float: right;
+    clear: right;
+    width: var(--side);
+    margin-right: calc(-1 * (var(--side) + var(--gap)));
+    margin-top: 0.3rem;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+  .side .de { font-style: italic; color: var(--ink); display: block; margin-bottom: 0.3rem; }
+  .side .src { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.04em; }
+
+  /* Display math */
+  .law {
+    font-family: var(--math);
+    font-size: 1.18rem;
+    text-align: center;
+    margin: 0.2rem 0 1.4rem;
+    padding-block: 0.9rem;
+    background: var(--wash);
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+  .law .join { color: var(--prussian); font-weight: 600; }
+  .law .wedge { color: var(--legacy-ink); font-weight: 600; }
+
+  .laws {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0.4rem 0 1.5rem;
+    border-block: 1px solid var(--rule);
+  }
+  .laws > div { padding: 1.1rem 1rem 1.2rem; display: grid; gap: 0.35rem; align-content: start; }
+  .laws > div + div { border-left: 1px solid var(--rule); }
+  .laws .label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+  .laws .eq { font-family: var(--math); font-size: 1.14rem; white-space: nowrap; overflow-x: auto; }
+  .laws .cond { font-family: var(--math); font-size: 0.98rem; color: var(--muted); }
+  .laws .join { color: var(--prussian); font-weight: 600; }
+  .laws .wedge { color: var(--legacy-ink); font-weight: 600; }
+
+  pre.lean {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.55;
+    background: var(--wash);
+    color: var(--ink);
+    padding: 0.9rem 1rem;
+    border-radius: 3px;
+    overflow-x: auto;
+    margin: 0 0 1.4rem;
+  }
+  pre.lean .kw { color: var(--prussian); font-weight: 500; }
+  pre.lean .cm { color: var(--muted); }
+  code { font-family: var(--mono); font-size: 0.86em; }
+
+  /* Figure 1 */
+  .fig { margin: 0.5rem 0 2rem; }
+  .fig svg { width: 100%; max-width: 30rem; height: auto; display: block; margin-inline: auto; }
+  .fig figcaption { font-size: 0.9rem; line-height: 1.45; color: var(--muted); max-width: 30rem; margin: 0.6rem auto 0; }
+  .fig figcaption b { font-family: var(--mono); font-weight: 500; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); margin-right: 0.4em; }
+  .hasse .edge { stroke: var(--muted); stroke-width: 1.3; }
+  .hasse .node { fill: var(--paper); stroke: var(--ink); stroke-width: 1.4; }
+  .hasse .top { fill: var(--prussian); stroke: var(--prussian); }
+  .hasse text { fill: var(--ink); font-family: var(--math); font-size: 15px; }
+  .hasse .lab { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; fill: var(--muted); }
+  .hasse .blue { fill: var(--prussian); }
+  .hasse .old { fill: var(--legacy-ink); }
+
+  /* Hestenes' lettered costs */
+  .costs { list-style: none; padding: 0; margin: 0 0 1.4rem; display: grid; gap: 0.9rem; }
+  .costs li { display: grid; grid-template-columns: 2.1rem minmax(0, 1fr); }
+  .costs .letter { font-family: var(--display); font-style: italic; color: var(--prussian); }
+  .costs p { margin: 0; }
+  .costs .lead { font-style: italic; }
+
+  .requests { list-style: none; padding: 0; margin: 0.4rem 0 0; display: grid; gap: 0.7rem; }
+  .requests li { padding-left: 1.1rem; border-left: 2px solid var(--prussian); }
+  .requests .to { font-style: italic; }
+
+  /* Glyph strokes: classes, not inline styles (the host CSP strips style attributes). */
+  .outer, .legacy { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .outer { stroke: currentColor; }
+  .legacy { stroke: var(--legacy, currentColor); }
+
+  .part-rule { border: 0; margin: 3.5rem 0 0; height: 1.6rem; display: grid; place-items: center; }
+  .part-rule svg { width: 3.2rem; height: 1.4rem; color: var(--muted); stroke-width: 0.09; --legacy: var(--muted); }
+
+  /* Citations */
+  .cites { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+  .cites h3 { font-family: var(--mono); font-weight: 500; font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 1rem; }
+  .cites ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.45rem; font-size: 0.9rem; line-height: 1.45; }
+  .cites li { padding-left: 1.2rem; text-indent: -1.2rem; }
+  .colophon { margin-top: 2rem; font-size: 0.9rem; color: var(--muted); }
+
+  @media (max-width: 1080px) {
+    .page { max-width: var(--measure); }
+    .side {
+      float: none;
+      width: auto;
+      margin: 0 0 1rem;
+      padding-left: 0.85rem;
+      border-left: 2px solid var(--rule);
+    }
+  }
+  @media (max-width: 720px) {
+    body { font-size: 1.08rem; }
+    .masthead { grid-template-columns: 1fr; padding-block: 3rem 2rem; }
+    .emblem { justify-content: flex-start; }
+    .emblem-note { grid-column: 1; text-align: left; margin-top: -1.2rem; }
+    .laws { grid-template-columns: 1fr; }
+    .laws > div + div { border-left: 0; border-top: 1px solid var(--rule); }
+  }
+</style>
+<style>
+  body { margin: 0; }
+  .home { padding-block: 1.4rem 0; font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .home a { color: var(--muted); text-decoration: none; }
+  .home a:hover, .home a:focus-visible { color: var(--prussian); text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="home" aria-label="Site"><a href="/">← Durant Schoon</a></nav>
+  <header class="masthead">
+    <div>
+      <h1>On the Sign of the <em>Outer Product</em></h1>
+      <p class="dek">An essay in two manners: the first after Hermann Grassmann, the second after David Hestenes. Both men used the term “outer product,” so it serves as the title.</p>
+      <p class="byline">Durant Schoon · September 2026</p>
+    </div>
+    <div class="emblem" role="group" aria-label="The proposed signs">
+      <figure>
+        <svg class="g-big" viewBox="-0.36 -0.31 0.72 0.62" role="img" aria-label="new wedge sign"><polyline class="outer" points="-0.30,-0.25 -0.15,0.25 0,0.07 0.15,0.25 0.30,-0.25"/><polyline class="legacy" points="-0.15,0.25 0,0.07 0.15,0.25"/></svg>
+        <figcaption>outer product<code>\wedgeGA</code></figcaption>
+      </figure>
+      <figure>
+        <svg class="g-big" viewBox="-0.36 -0.31 0.72 0.62" role="img" aria-label="new antiwedge sign"><polyline class="outer" points="-0.30,0.24 -0.15,-0.24 0,-0.07 0.15,-0.24 0.30,0.24"/><polyline class="legacy" points="-0.15,-0.24 0,-0.07 0.15,-0.24"/></svg>
+        <figcaption>regressive product<code>\antiwedgeGA</code></figcaption>
+      </figure>
+    </div>
+    <p class="emblem-note">inner mark, in <span>orange</span>: the legacy sign</p>
+  </header>
+
+  <!-- ============ PART I ============ -->
+  <section class="prose" aria-labelledby="p1">
+    <div class="part-head">
+      <h2 id="p1"><span class="numeral">I.</span>After Grassmann</h2>
+      <p class="part-meta">Die Ausdehnungslehre · 1844 &amp; 1862</p>
+    </div>
+    <div class="col">
+      <aside class="side"><span class="de">„Den ersten Anstoss gab mir die Betrachtung des Negativen in der Geometrie …“</span><span class="src">1844, Vorrede, p. III</span></aside>
+      <p>Grassmann opened the foreword to his <i>Ausdehnungslehre</i> of 1844 with the small case that first set him going: he had grown used to regarding the displacements <span class="m">AB</span> and <span class="m">BA</span> as opposite magnitudes. My own starting point was smaller still. I came to his algebra from computer graphics, by way of Eric Lengyel’s talks, and the first thing that stopped me was two points. The outer product of two points <span class="m">a</span> and <span class="m">b</span> is the line through them. Anyone who has met a lattice, or a first course in logic, would write that line as <span class="m">a</span>&#8201;<span class="op">∨</span>&#8201;<span class="m">b</span>, since it is the least thing that contains both. The algebra I was learning wrote it <span class="m">a</span>&#8201;<span class="op">∧</span>&#8201;<span class="m">b</span>, and it gave the <span class="op">∨</span> to the point where two lines cross, which is the greatest thing the two lines have in common.</p>
+
+      <figure class="fig">
+        <svg class="hasse" viewBox="0 0 440 230" role="img" aria-label="Hasse diagram: the line ab sits above points a and b, which sit above 0. The lattice writes the line a join b; legacy geometric algebra writes a wedge b.">
+          <line class="edge" x1="150" y1="40" x2="80" y2="115"/>
+          <line class="edge" x1="150" y1="40" x2="220" y2="115"/>
+          <line class="edge" x1="80" y1="115" x2="150" y2="190"/>
+          <line class="edge" x1="220" y1="115" x2="150" y2="190"/>
+          <circle class="node top" cx="150" cy="40" r="6"/>
+          <circle class="node" cx="80" cy="115" r="5.5"/>
+          <circle class="node" cx="220" cy="115" r="5.5"/>
+          <circle class="node" cx="150" cy="190" r="5.5"/>
+          <text x="58" y="120" text-anchor="end" font-style="italic">a</text>
+          <text x="238" y="120" font-style="italic">b</text>
+          <text x="150" y="216" text-anchor="middle">0</text>
+          <text x="168" y="30" font-style="italic">line ab</text>
+          <text class="lab" x="268" y="52">LATTICE / LOGIC</text>
+          <text x="268" y="72" class="blue"><tspan font-style="italic">a</tspan> ∨ <tspan font-style="italic">b</tspan></text>
+          <text class="lab" x="268" y="104">LEGACY GA</text>
+          <text x="268" y="124" class="old"><tspan font-style="italic">a</tspan> ∧ <tspan font-style="italic">b</tspan></text>
+        </svg>
+        <figcaption><b>Fig. 1</b>Two points and the line through them, drawn in the lattice of subspaces. The line sits above both points as their join; below them is only 0. The two traditions write the same element with opposite signs.</figcaption>
+      </figure>
+
+      <aside class="side"><span class="de">„… da es widersinnig wäre, Verknüpfungen, welche in allen Beziehungen denselben Gesetzen unterliegen, verschieden zu bezeichnen.“</span><span class="src">1862, Vorrede, p. VI</span></aside>
+      <p>I do not claim that the algebra is wrong. Its theorems stand whatever we draw between the letters, and nothing I say here touches a single one of them. My claim concerns the sign. It rests on a principle Grassmann himself set down in the foreword of 1862, when he explained why he wrote some operations alike and one differently. It would be absurd, he wrote, “to denote differently operations that obey the same laws in every respect,” and where an operation’s laws differ from the others’, “it was necessary to distinguish it by its notation.” On this view a sign answers to what the operation does, and it is fair to ask whether ours does.</p>
+
+      <p>We ask, then, what the outer product does. Given two subspaces that share nothing but the origin, it yields the subspace they span, and the grades add, so that a vector with a vector gives an element of plane, and a point with a line gives a plane. Given two subspaces that share a direction, it yields zero. Spanning is the join in the lattice of subspaces, and the join obeys a law of dimension which, written in lattice notation, reads</p>
+
+      <div class="law" role="math" aria-label="dim of U join W plus dim of U meet W equals dim U plus dim W">dim(<i>U</i> <span class="join">∨</span> <i>W</i>) + dim(<i>U</i> ∧ <i>W</i>) = dim <i>U</i> + dim <i>W</i></div>
+
+      <aside class="side"><span class="de">„… deren Ergänzung das progressive Produkt der Ergänzungen jener Einheiten ist.“</span><span class="src">1862, No. 94</span></aside>
+      <p>When <span class="m">U</span> and <span class="m">W</span> meet only at the origin the second term vanishes and dimensions simply add, which is the rule the outer product follows for its grades. The regressive product Grassmann defined in 1862 as the quantity “whose complement is the progressive product of the complements,” and so it finds what two subspaces hold in common. That is De Morgan’s rule, the same rule that in logic carries <span class="op">∨</span> over to <span class="op">∧</span> and back again. The two products of the algebra and the two operations of the lattice therefore correspond member for member, and our present signs pair them crosswise.</p>
+
+      <p>Grassmann is not the author of the crossing. He wrote the outer product by juxtaposition, marked the regressive product with a point set between the factors, and in 1862 enclosed both in one square bracket and let the grades tell them apart. The wedge came a century later. The best account of its origin I have found places it with Claude Chevalley between 1951 and 1954, carried into general use by Bourbaki, though that account rests on one careful blogger’s survey of the books and leaves an earlier Bourbaki volume unexamined. I have no quarrel with Chevalley. He was a great algebraist, and in the calculus of differential forms, where no regressive product appears, the wedge never meets its partner and so never contradicts it.</p>
+
+      <aside class="side"><span class="de">„… da es hier auf Namen wenig ankommt.“</span><span class="src">1862, Vorrede, p. V</span></aside>
+      <p>It will be objected that a sign is only a convention, and that any convention serves once it is agreed. If agreement were the whole of the matter, we might write + for multiplication and × for addition and trust every reader to remember, and nobody proposes this, because the agreement between a sign and the meaning it carries across the rest of mathematics is part of what makes the sign readable at all. Grassmann was careful to say that “names matter little here,” and then to name the question that does matter: whether a boundary drawn between two domains would split, arbitrarily and against the nature of the thing, what belongs together. The span of subspaces and the join of a lattice belong together. Our signs draw the boundary straight through them.</p>
+
+      <aside class="side"><span class="de">„… wo es aus dem Staube der Vergessenheit hervorgezogen werden wird, und wo die darin niedergelegten Ideen ihre Frucht tragen werden.“</span><span class="src">1862, Vorrede, p. VIII</span></aside>
+      <p>The correspondence I have described is not mine, and I do not think it optional. The form in which I propose to honor it, a pair of glyphs drawn in TikZ, is mine, and it is imperfect. The new wedge <svg class="g" viewBox="-0.36 -0.31 0.72 0.62" role="img" aria-label="new wedge"><polyline class="outer" points="-0.30,-0.25 -0.15,0.25 0,0.07 0.15,0.25 0.30,-0.25"/><polyline class="legacy" points="-0.15,0.25 0,0.07 0.15,0.25"/></svg> is a <span class="op">∨</span> whose base folds up into a small <span class="op">∧</span>, and the new antiwedge <svg class="g" viewBox="-0.36 -0.31 0.72 0.62" role="img" aria-label="new antiwedge"><polyline class="outer" points="-0.30,0.24 -0.15,-0.24 0,-0.07 0.15,-0.24 0.30,0.24"/><polyline class="legacy" points="-0.15,-0.24 0,-0.07 0.15,-0.24"/></svg> is a <span class="op">∧</span> with a small <span class="op">∨</span> at its peak. A reader who knows only the old signs finds them there, and a reader who knows the lattice sees the larger shape. In the foreword to his second book, seventeen years after the first had gone almost unread, Grassmann wrote that even if this one should lie idle as long or longer, a time would come when it “will be drawn out of the dust of oblivion, and the ideas set down in it will bear fruit.” They have borne it, and they are taught now under signs he never used. I would like the small inner mark to be needed for a long while, and then, some day, for no one to need it.</p>
+    </div>
+  </section>
+
+  <div class="part-rule col" role="separator"><svg viewBox="-0.36 -0.31 0.72 0.62" aria-hidden="true"><polyline class="outer" points="-0.30,-0.25 -0.15,0.25 0,0.07 0.15,0.25 0.30,-0.25"/><polyline class="legacy" points="-0.15,0.25 0,0.07 0.15,0.25"/></svg></div>
+
+  <!-- ============ PART II ============ -->
+  <section class="prose" aria-labelledby="p2">
+    <div class="part-head">
+      <h2 id="p2"><span class="numeral">II.</span>After Hestenes</h2>
+      <p class="part-meta">Unified Language 1986 · Mathematical Viruses 1992 · Oersted Lecture 2002</p>
+    </div>
+    <div class="col">
+      <p>Geometric algebra has won more of its arguments than once seemed likely. Physicists meet the geometric product in some graduate courses, roboticists write kinematics with it, and graphics programmers ship it. One small argument has not been had at all, because the field inherited its answer. The outer product, which joins subspaces, is written with <span class="op">∧</span>, the sign that everywhere else in mathematics means meet.</p>
+
+      <p>Let there be no mistake about the scope of the complaint. There is nothing wrong with the wedge in the calculus of differential forms, where it arose, and where no <span class="op">∨</span> stands beside it to be contradicted. The trouble begins only where the regressive product returns, and geometric algebra is the place where it returned.</p>
+
+      <p>The costs are specific.</p>
+
+      <ol class="costs">
+        <li><span class="letter">(a)</span>
+          <div>
+            <aside class="side"><span class="de">Sturmfels, <i>Algorithms in Invariant Theory</i>, 2nd ed.</span><span class="src">2008, §3.3, p. 94</span></aside>
+            <p><span class="lead">Two communities read the same signs in opposite senses.</span> When Bernd Sturmfels presents the invariant theory developed by Rota’s school, he must stop to explain: “For geometric reasons we write the exterior product in Λ(V) as ‘∨’ instead of the usual ‘∧’, and refer to it as the join operation.” From the other side, the supplement to Dorst, Fontijne and Mann’s textbook concedes: “Because of our preemptive use of ‘∧’ for the outer product, we cannot simply appropriate lattice theory’s notation.” That book therefore writes join and meet as <span class="op">∪</span> and <span class="op">∩</span>, a third notation for the same pair. Hestenes warned in 1986 that “we cannot afford the laissez-faire proliferation of mathematical definitions and notations.” Here is a proliferation, and it was forced.</p>
+          </div>
+        </li>
+        <li><span class="letter">(b)</span>
+          <div>
+            <p><span class="lead">Students must learn to read against the grain.</span> Logic has written <span class="op">∧</span> for conjunction since Heyting in 1930, and <span class="op">∨</span> for disjunction since Russell’s manuscripts of 1902. A student who comes to geometric algebra after a course in logic or discrete mathematics must learn that the sign for “and” now means the operation that grows.</p>
+          </div>
+        </li>
+        <li><span class="letter">(c)</span>
+          <div>
+            <p><span class="lead">Checking formulas will not expose the error.</span> This is the insidious part. Lattice theory has a principle of duality: exchange <span class="op">∧</span> and <span class="op">∨</span> throughout a theorem and you obtain another theorem. The relations between the two signs therefore cannot tell you which one is the join. Only order can, meaning which operation goes up, and in geometric algebra that is grade. A reader who checks identities will never catch the crossing. Only a reader who asks which product raises grade will. A convention that no test can detect survives indefinitely. The gafro implementations of conformal geometric algebra learned this about a different convention, a sign in the axis-to-bivector map, which passed every test suite until two implementations’ outputs met.</p>
+          </div>
+        </li>
+      </ol>
+
+      <p>What should a sign satisfy? Hestenes put the general demand plainly: “we need rational criteria to distinguish good design from poor design. Custom is not enough.” For the present question I propose three criteria. A sign should agree with the meaning it carries in neighboring mathematics. It should remain readable to those trained in the old usage. And whichever convention a document uses, it should declare it. The bare swap, writing <span class="op">∨</span> for the outer product tomorrow, meets the first criterion and fails the second. The status quo meets the second and fails the first. The transitional glyphs are designed to meet both, and the package exists to make the third cheap.</p>
+
+      <p>A claim of this kind should be paid for with an equation.</p>
+
+      <div class="laws">
+        <div>
+          <span class="label">Join, in the lattice of subspaces</span>
+          <span class="eq">dim(<i>U</i> <span class="join">∨</span> <i>W</i>) = dim <i>U</i> + dim <i>W</i></span>
+          <span class="cond">whenever <i>U</i> ∧ <i>W</i> = 0</span>
+        </div>
+        <div>
+          <span class="label">Outer product, for blades</span>
+          <span class="eq">grade(<i>A</i> <span class="wedge">∧</span> <i>B</i>) = grade <i>A</i> + grade <i>B</i></span>
+          <span class="cond">whenever <i>A</i> ∧ <i>B</i> ≠ 0</span>
+        </div>
+      </div>
+
+      <p>Set the two lines side by side and the same law appears twice, with the sign turned over. For the basis blades of CGA(4,1) the second line is a theorem: in the Lean 4 formalization gafro-lean it is <code>wedge_grade_additive</code>, checked by the kernel over every ordered pair of basis blades with disjoint support.</p>
+
+<pre class="lean"><span class="cm">/-- The outer product adds grades on the pairs it admits. -/</span>
+<span class="kw">theorem</span> wedge_grade_additive : ∀ am (ha : am &lt; 32) bm (hb : bm &lt; 32),
+    disjointBlades (BladeIndex.mk am ha) (BladeIndex.mk bm hb) = true →
+      (productBlade (BladeIndex.mk am ha) (BladeIndex.mk bm hb)).grade
+        = (BladeIndex.mk am ha).grade + (BladeIndex.mk bm hb).grade</pre>
+
+      <aside class="side"><span class="de">Hestenes, “Mathematical Viruses,” in <i>Clifford Algebras and their Applications in Mathematical Physics</i></span><span class="src">1992, §§1–3</span></aside>
+      <p>Hestenes gave us a name for this kind of trouble. A mathematical virus, in his definition, is “a preconception about the structure, function or method of mathematics which impairs one’s ability to do mathematics.” He added that a virus “is most likely to be a remnant of an earlier evolutionary stage in which it had a useful functional role to play; a role made defunct by subsequent evolution.” In his taxonomy I would place a small new strain, the preconception that the sign attached to the outer product is merely a convention and therefore beyond criticism. It fits his description of a remnant exactly. In differential forms the wedge played a useful role and harmed no one. The revival of Grassmann’s regressive product, which Hestenes helped bring about, is the subsequent evolution that made its role defunct.</p>
+
+      <aside class="side"><span class="de">Hestenes &amp; Ziegler, “Projective Geometry with Clifford Algebra,” <i>Acta Appl. Math.</i> 23</span><span class="src">1991, §3.1</span></aside>
+      <p>Ironically, Hestenes himself carries the strain. In the 1991 paper with Renatus Ziegler on projective geometry, the support of the outer product is described as “the usual ‘lattice join’ of the supports of A and B,” and the next line defines it as <span class="m">J</span> = <span class="m">A</span>&#8201;<span class="op">∧</span>&#8201;<span class="m">B</span>. In <i>Mathematical Viruses</i> he quotes Barnabei, Brini and Rota with approval: it would be “capricious to limit such a calculus to a single operation, just as capricious as limiting the algebra of sets to the single operation of union,” and he writes the union-like operation with the sign for meet. I say this in the spirit in which he once noted Grassmann’s own dismissal of Hamilton “without due credit.” The founders of a reform rarely finish it. I suspect he kept the wedge for the reason reformers keep most of what they inherit: a reform spends its credibility on the changes that matter most, and his changes were far larger than this one.</p>
+
+      <p>One case deserves its own paragraph, because it is the strongest objection. In plane-based projective geometric algebra, the vectors represent planes, and the outer product of two planes is the line where they meet. There <span class="op">∧</span> is a geometric meet, and Dorst and De Keninck teach it with the mnemonic <span class="op">∧</span> for <span class="op">∩</span> and <span class="op">∨</span> for <span class="op">∪</span>. I do not propose to take that mnemonic away. The outer product still spans in the algebra, and it is the geometric reading that turns span into intersection. The wedgeGA glyphs name the algebraic operation, so a reader of plane-based PGA who wants the geometric reading still finds the old <span class="op">∧</span> inside the new sign.</p>
+
+      <p>Hestenes coined the dictum “Mathematics is too important to be left to the mathematicians!” Signs are the part of mathematics that most people meet first, which makes them too important to be left to custom. Three requests follow.</p>
+
+      <ul class="requests">
+        <li><span class="to">To authors:</span> whatever sign you use for the outer product, declare it in one sentence, and say what it means.</li>
+        <li><span class="to">To designers of new systems,</span> such as Typst packages, font tables and Unicode proposals: the convention there is still fluid, and nothing obliges you to inherit the crossing.</li>
+        <li><span class="to">To the geometric algebra community:</span> try the transitional glyphs in one paper and see whether a reader from lattice theory, logic or Grassmann–Cayley algebra can follow it without a footnote.</li>
+      </ul>
+
+      <footer class="cites">
+        <h3>Citations</h3>
+        <ul>
+          <li>Grassmann, <i>Die lineale Ausdehnungslehre</i> (1844), Vorrede, as reprinted in the 2nd ed. (1878), pp. III–V. <a href="https://archive.org/details/dieausdehnungsl04grasgoog">archive.org</a></li>
+          <li>Grassmann, <i>Die Ausdehnungslehre</i> (1862), Vorrede, pp. V–VIII, and No. 94. <a href="https://archive.org/details/dieausdehnugsle00grasgoog">archive.org</a></li>
+          <li>Hestenes, “A Unified Language for Mathematics and Physics” (1986), Introduction.</li>
+          <li>Hestenes, “Mathematical Viruses” (1992), §§1–4, quoting Barnabei, Brini &amp; Rota, <i>J. Algebra</i> 96 (1985).</li>
+          <li>Hestenes &amp; Ziegler, “Projective Geometry with Clifford Algebra,” <i>Acta Appl. Math.</i> 23 (1991), §3.1.</li>
+          <li>Hestenes, Oersted Medal Lecture (2002), <i>Am. J. Phys.</i> 71 (2003), §IV.</li>
+          <li>Hestenes, “Grassmann’s Vision” (1996), §I.</li>
+          <li>Sturmfels, <i>Algorithms in Invariant Theory</i>, 2nd ed. (2008), §3.3.</li>
+          <li>Grunberg, supplement to Dorst, Fontijne &amp; Mann, <i>Geometric Algebra for Computer Science</i> (2008).</li>
+          <li>Dorst &amp; De Keninck, <i>A Guided Tour to the Plane-Based Geometric Algebra PGA</i> (2022), §3.1.</li>
+          <li>Nolte, “Hermann Grassmann’s Nimble Wedge Product,” <i>Galileo Unbound</i> (2019). <a href="https://galileo-unbound.blog/2019/12/02/hermann-grassmanns-nimble-wedge-product/">blog</a></li>
+          <li>J. Miller, <i>Earliest Uses of Symbols of Set Theory and Logic</i>, MacTutor.</li>
+          <li>gafro-lean, <code>GafroLean/Laws.lean</code>, <code>wedge_grade_additive</code>.</li>
+        </ul>
+        <p class="colophon">Translations from Grassmann’s German are new for this essay; the originals stand in the margins. The glyphs are drawn from the coordinates in the wedgeGA LaTeX package: <a href="https://github.com/durantschoon/wedgeGA-symbols">github.com/durantschoon/wedgeGA-symbols</a>. Essay text © 2026 Durant Schoon, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; quoted passages remain their authors’.</p>
+      </footer>
+    </div>
+  </section>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- LAUNCH: delete the next line (and the rule in _headers) to allow search indexing. -->
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<title>Durant Schoon</title>
+<meta name="description" content="Durant Schoon: geometric algebra, formal verification in Lean, and the notation that joins them.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@0,400;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Same token set as the essay (on-the-sign.html): Prussian blue for the new signs,
+     orange only for the embedded legacy mark. */
+  :root {
+    --paper: #F3F5F4;
+    --ink: #1A2027;
+    --muted: #56616B;
+    --rule: #D3DADC;
+    --prussian: #1D4E6E;
+    --legacy-ink: #B35500;
+    --wash: #E7ECEE;
+    --display: "Libre Bodoni", "Bodoni 72", "Didot", Georgia, serif;
+    --text: "Newsreader", "Iowan Old Style", Georgia, serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --measure: 44rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #11161B; --ink: #E2E6E9; --muted: #98A4AE; --rule: #2A333B;
+      --prussian: #8BB9DC; --legacy-ink: #FFB65C; --wash: #182028;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #11161B; --ink: #E2E6E9; --muted: #98A4AE; --rule: #2A333B;
+    --prussian: #8BB9DC; --legacy-ink: #FFB65C; --wash: #182028;
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--text);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    font-optical-sizing: auto;
+    padding-inline: 20px;
+    padding-block: 0 4rem;
+  }
+  a { color: var(--prussian); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible { outline: 2px solid var(--prussian); outline-offset: 3px; border-radius: 2px; }
+
+  .wrap { max-width: var(--measure); margin-inline: auto; display: grid; gap: 3.5rem; }
+
+  .label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+
+  /* Masthead */
+  .intro { padding-block: 5rem 0; display: grid; gap: 1rem; }
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 7vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .intro p { margin: 0; max-width: 36rem; text-wrap: pretty; }
+  .intro .lede { font-size: 1.28rem; line-height: 1.45; }
+  .contact { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.03em; margin-top: 0.4rem; }
+
+  /* Featured essay: the one lifted object on the page */
+  .featured {
+    background: var(--wash);
+    border-radius: 4px;
+    padding: 2rem clamp(1.25rem, 4vw, 2.5rem);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1.25rem 2.25rem;
+    align-items: center;
+  }
+  .featured .glyphs { display: flex; gap: 1rem; }
+  .featured .glyphs svg { width: 4.2rem; height: 3.6rem; color: var(--prussian); stroke-width: 0.055; }
+  .outer, .legacy { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .outer { stroke: currentColor; }
+  .legacy { stroke: var(--legacy-ink); }
+  .featured h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 3.6vw, 2.1rem);
+    line-height: 1.12;
+    margin: 0.35rem 0 0.6rem;
+    text-wrap: balance;
+  }
+  .featured h2 a { color: var(--ink); text-decoration: none; }
+  .featured h2 a:hover { color: var(--prussian); }
+  .featured p { margin: 0 0 0.9rem; text-wrap: pretty; }
+  .featured .more { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.03em; }
+
+  /* Work */
+  .work h2 { font-family: var(--mono); font-weight: 500; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 0.25rem; }
+  .work dl { margin: 0; }
+  .work .item { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 0.2rem 1.75rem; padding-block: 1.1rem; border-top: 1px solid var(--rule); }
+  .work .item:last-child { border-bottom: 1px solid var(--rule); }
+  .work dt { font-family: var(--display); font-size: 1.2rem; line-height: 1.3; }
+  .work dd { margin: 0; }
+  .work dd p { margin: 0 0 0.35rem; text-wrap: pretty; }
+  .work .meta { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.03em; color: var(--muted); }
+
+  footer { font-size: 0.92rem; color: var(--muted); display: grid; gap: 0.5rem; }
+  footer p { margin: 0; max-width: 36rem; }
+  footer i { color: var(--ink); }
+
+  @media (max-width: 640px) {
+    body { font-size: 1.08rem; }
+    .intro { padding-block: 3rem 0; }
+    .featured { grid-template-columns: 1fr; }
+    .work .item { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header class="intro">
+    <p class="label">eigenblade.ninja</p>
+    <h1>Durant Schoon</h1>
+    <!-- EDIT ME: this intro is drafted only from what the repositories show. Say it your way. -->
+    <p class="lede">I came to geometric algebra from computer graphics, and stayed for the proofs.</p>
+    <p>I build implementations of conformal geometric algebra for robotics in five languages, and check them against one another, including a Lean 4 formalization tied to Mathlib. Along the way I have been making the case that the outer product carries the wrong sign.</p>
+    <nav class="contact" aria-label="Contact">
+      <a href="https://github.com/durantschoon">GitHub</a>
+      <!-- EDIT ME: add the links you want employers to see, e.g.
+      <a href="https://www.linkedin.com/in/…">LinkedIn</a>
+      <a href="/cv.pdf">CV</a>
+      <a href="mailto:…">Email</a>
+      -->
+    </nav>
+  </header>
+
+  <article class="featured" aria-labelledby="feat">
+    <div class="glyphs" aria-hidden="true">
+      <svg viewBox="-0.36 -0.31 0.72 0.62"><polyline class="outer" points="-0.30,-0.25 -0.15,0.25 0,0.07 0.15,0.25 0.30,-0.25"/><polyline class="legacy" points="-0.15,0.25 0,0.07 0.15,0.25"/></svg>
+      <svg viewBox="-0.36 -0.31 0.72 0.62"><polyline class="outer" points="-0.30,0.24 -0.15,-0.24 0,-0.07 0.15,-0.24 0.30,0.24"/><polyline class="legacy" points="-0.15,-0.24 0,-0.07 0.15,-0.24"/></svg>
+    </div>
+    <div>
+      <p class="label">Essay</p>
+      <h2 id="feat"><a href="/on-the-sign">On the Sign of the Outer Product</a></h2>
+      <p>Geometric algebra writes the product that <em>joins</em> subspaces with ∧, the sign the rest of mathematics uses for <em>meet</em>. This essay argues the case in two manners, after Hermann Grassmann and after David Hestenes, and proposes transitional glyphs that carry the old sign inside the new.</p>
+      <a class="more" href="/on-the-sign">Read the essay →</a>
+    </div>
+  </article>
+
+  <section class="work" aria-labelledby="work">
+    <h2 id="work">Work</h2>
+    <dl>
+      <div class="item">
+        <dt>gafro family</dt>
+        <dd>
+          <p>Conformal geometric algebra, CGA(4,1), for robot kinematics, implemented in C++, Rust, Julia, Idris 2 and Lean 4. The implementations are cross-checked against shared fixtures; when a silent sign-convention split between them surfaced, it was resolved family-wide by a declared decision.</p>
+          <span class="meta">Repositories private for now</span>
+        </dd>
+      </div>
+      <div class="item">
+        <dt>gafro-lean</dt>
+        <dd>
+          <p>A Lean 4 formalization of CGA(4,1) whose laws are kernel-checked theorems. It proves the concrete multiplication table equal to Mathlib's abstract <code>CliffordAlgebra</code>, so associativity is inherited rather than re-checked.</p>
+          <span class="meta">Lean 4 · Mathlib · private for now</span>
+        </dd>
+      </div>
+      <div class="item">
+        <dt>wedgeGA</dt>
+        <dd>
+          <p>A LaTeX package for the transitional wedge and antiwedge symbols, drawn in TikZ, which typeset as drop-in replacements for <code>\wedge</code> and <code>\vee</code>.</p>
+          <span class="meta"><a href="https://github.com/durantschoon/wedgeGA-symbols">github.com/durantschoon/wedgeGA-symbols</a> · LPPL 1.3c</span>
+        </dd>
+      </div>
+      <div class="item">
+        <dt>gafro-extended</dt>
+        <dd>
+          <p>My fork of Idiap's <a href="https://github.com/idiap/gafro">gafro</a>, a C++ geometric algebra library for robotics.</p>
+          <span class="meta"><a href="https://github.com/durantschoon/gafro-extended">github.com/durantschoon/gafro-extended</a> · C++</span>
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <footer>
+    <p>An <i>eigenblade</i> is a blade that a linear map sends to a multiple of itself: an invariant subspace, in geometric algebra's language.</p>
+    <p>Essay text © 2026 Durant Schoon, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+  </footer>
+
+</main>
+</body>
+</html>
