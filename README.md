@@ -19,12 +19,12 @@ Every push to `main` deploys through GitHub Actions (`.github/workflows/deploy.y
 
 The workflow needs two repository secrets, set under GitHub → Settings → Secrets and variables → Actions:
 
-- `CLOUDFLARE_API_TOKEN`: a Cloudflare API token with the permission *Account → Workers Scripts → Edit*.
+- `CLOUDFLARE_API_TOKEN`: a Cloudflare API token made from the *Edit Cloudflare Workers* template, which also covers the routes that attach the custom domains.
 - `CLOUDFLARE_ACCOUNT_ID`: shown in the Cloudflare dashboard, on the Workers & Pages overview.
 
 Until both are set, the workflow skips the deploy rather than failing. To run it by hand: `gh workflow run deploy.yml`.
 
-The custom domain is attached once, in the dashboard: Workers & Pages → eigenblade → Settings → Domains & Routes → Add → Custom domain → `eigenblade.ninja`.
+The custom domains, `eigenblade.ninja` and `www.eigenblade.ninja`, are declared as `routes` in `wrangler.jsonc`, and every deploy attaches them, DNS and HTTPS included. Declaring them turns off the `workers.dev` URL; `"workers_dev": true` brings it back. Bot Fight Mode is off for the zone, because its challenge page blocks link previews.
 
 Why Actions rather than Cloudflare's own Git integration: on 2026-09-13 its GitHub app install kept looping to a GitHub 404, at `…/installations` without the `/new`.
 
