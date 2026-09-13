@@ -13,21 +13,20 @@ The site lives in `public/`, which is Cloudflare Pages' output directory. This R
 - `public/favicon.svg`: the `\wedgeGA` glyph.
 - `public/_headers`: Cloudflare Pages response headers. For now it sets `X-Robots-Tag: noindex` on every page.
 
-## Deploy (Cloudflare Pages, Git integration)
+## Deploy
 
-The Pages project `eigenblade` is connected to this GitHub repo: **every push to `main` deploys**. Its build settings are: framework preset *None*, build command empty, output directory `public`.
+Every push to `main` deploys through GitHub Actions (`.github/workflows/deploy.yml`) to Cloudflare, as a Worker with static assets. `wrangler.jsonc` sets the name `eigenblade` and the assets folder `./public`. `_headers` applies there as it would on Pages.
 
-A manual deploy is also possible, with an API token in `CLOUDFLARE_API_TOKEN`:
+The workflow needs two repository secrets, set under GitHub → Settings → Secrets and variables → Actions:
 
-```sh
-npx wrangler pages deploy public --project-name eigenblade
-```
+- `CLOUDFLARE_API_TOKEN`: a Cloudflare API token with the permission *Account → Workers Scripts → Edit*.
+- `CLOUDFLARE_ACCOUNT_ID`: shown in the Cloudflare dashboard, on the Workers & Pages overview.
 
-The custom domain is attached once, in the dashboard: Workers & Pages → eigenblade → Custom domains → `eigenblade.ninja`.
+Until both are set, the workflow skips the deploy rather than failing. To run it by hand: `gh workflow run deploy.yml`.
 
-### Alternative: deploy as a Worker (Workers Builds)
+The custom domain is attached once, in the dashboard: Workers & Pages → eigenblade → Settings → Domains & Routes → Add → Custom domain → `eigenblade.ninja`.
 
-If the dashboard only offers Workers, `wrangler.jsonc` (name `eigenblade`, assets `./public`) makes the same repo deployable as a Worker with static assets. `_headers`, and so the noindex rule, works there too. Import the repo under the name `eigenblade`, leave the build command empty, and use the deploy command `npx wrangler deploy`. Attach the domain under the Worker's Settings → Domains & Routes → Custom domain.
+Why Actions rather than Cloudflare's own Git integration: on 2026-09-13 its GitHub app install kept looping to a GitHub 404, at `…/installations` without the `/new`.
 
 ## LAUNCH CHECKLIST: make the site visible to search engines
 
@@ -36,7 +35,7 @@ The site is public but **hidden from search engines** until the announcement pla
 1. Delete the `<meta name="robots" content="noindex">` line from **every** `.html` file:
    `grep -rn 'name="robots"' public/`
 2. Delete the `X-Robots-Tag: noindex` rule from `public/_headers` (or delete the file).
-3. Commit and push to `main`; Pages redeploys automatically.
+3. Commit and push to `main`; the Deploy workflow redeploys automatically.
 4. Check that both are gone:
    `curl -sI https://eigenblade.ninja | grep -i robots` should print nothing, and
    `curl -s https://eigenblade.ninja | grep -i 'name="robots"'` should print nothing.
