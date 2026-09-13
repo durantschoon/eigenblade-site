@@ -1,0 +1,9 @@
+// Cloudflare Workers static-assets config (used if the site is deployed as a Worker).
+// A Pages project ignores this file. The Worker name must match the dashboard name.
+{
+  "name": "eigenblade",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./public"
+  }
+}

@@ -25,6 +25,10 @@ npx wrangler pages deploy public --project-name eigenblade
 
 The custom domain is attached once, in the dashboard: Workers & Pages → eigenblade → Custom domains → `eigenblade.ninja`.
 
+### Alternative: deploy as a Worker (Workers Builds)
+
+If the dashboard only offers Workers, `wrangler.jsonc` (name `eigenblade`, assets `./public`) makes the same repo deployable as a Worker with static assets. `_headers`, and so the noindex rule, works there too. Import the repo under the name `eigenblade`, leave the build command empty, and use the deploy command `npx wrangler deploy`. Attach the domain under the Worker's Settings → Domains & Routes → Custom domain.
+
 ## LAUNCH CHECKLIST: make the site visible to search engines
 
 The site is public but **hidden from search engines** until the announcement plan says go. This is timed with the author's academic goals.
